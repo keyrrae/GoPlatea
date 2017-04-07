@@ -15,7 +15,7 @@ func init() {
 
 func main() {
 
-	log.Printf("Serving GoPlatea at localhost:%v...\n", "3000")
+	log.Printf("Serving GoPlatea at localhost:%v...\n", *serveAddress)
 
 	if err := http.ListenAndServe(*serveAddress, nil); err != nil {
 		log.Fatal(err)
