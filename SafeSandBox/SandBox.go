@@ -10,6 +10,8 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"path/filepath"
+	"go/token"
 )
 
 const maxRunTime = 5 * time.Second
@@ -42,7 +44,15 @@ func compileAndRun(req *CompileRunRequest) (*CompileRunResponse, error) {
 	}
 	defer os.RemoveAll(tempDirectory)
 
+	in := filepath.Join(tempDirectory, "main.go")
+	err = ioutil.WriteFile(in, []byte(req.Body), 0440)
+	if err != nil {
+		return nil, fmt.Errorf("Error when creating a temporary file %v: %v", in, err)
+	}
+
+	fileSet := token.NewFileSet()
 	// TODO: body of compile and run
+	_ = fileSet
 
 	return &CompileRunResponse{Head: "head", Body: "body"}, nil
 }
