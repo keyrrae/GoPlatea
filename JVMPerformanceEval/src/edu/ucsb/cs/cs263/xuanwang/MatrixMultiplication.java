@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class MatrixMultiplication {
 
-
   public static double[][] multiplicar(double[][] A, double[][] B) {
 
     int aRows = A.length;
@@ -92,4 +91,3 @@ class MatrixBuilder {
     return res;
   }
 }
-
