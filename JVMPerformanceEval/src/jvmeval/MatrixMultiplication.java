@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs263.xuanwang;
+package jvmeval;
 
 import java.util.Random;
 
