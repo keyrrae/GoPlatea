@@ -1,0 +1,31 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;HackPlatea&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/awesomeProject" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/git.apache.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/google.golang.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/labix.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/goji.io" />
+      <root url="file://$PROJECT_DIR$/../../DistSystem/TicketBoxRaft/GoRaft/src/client" />
+      <root url="file://$PROJECT_DIR$/../../DistSystem/TicketBoxRaft/GoRaft/src/server" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/gopkg.in" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/github.com" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/golang.org" />
+    </CLASSES>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/awesomeProject" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/git.apache.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/google.golang.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/labix.org" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/goji.io" />
+      <root url="file://$PROJECT_DIR$/../../DistSystem/TicketBoxRaft/GoRaft/src/client" />
+      <root url="file://$PROJECT_DIR$/../../DistSystem/TicketBoxRaft/GoRaft/src/server" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/gopkg.in" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/github.com" />
+      <root url="file://$PROJECT_DIR$/../../goprojects/src/golang.org" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
