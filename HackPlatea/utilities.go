@@ -1,0 +1,55 @@
+package main
+
+import (
+	"os"
+	"log"
+	"os/exec"
+)
+
+type EnvHelper struct{
+	Filename string
+}
+
+func NewEnvHelper(filename string) EnvHelper {
+	res := EnvHelper{
+		Filename: filename,
+	}
+
+	return res
+}
+
+func (eh EnvHelper) GetCurrDirectory() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return dir + "/"
+}
+
+func (eh EnvHelper) ClearWorkspace() (string, error) {
+	os.Remove(eh.Filename)
+	cmd := exec.Command("touch", ".hhconfig")
+	output, err := cmd.CombinedOutput()
+	res := string(output)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
+func (eh EnvHelper) WriteProgToSystem(prog string) error {
+	f, err := os.Create(eh.Filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write([]byte(prog))
+	if err != nil {
+		return err
+	}
+
+	f.Sync()
+	return nil
+}

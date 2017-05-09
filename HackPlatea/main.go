@@ -1,56 +1,74 @@
 package main
 
 import (
-	"os/exec"
-	"os"
+	"github.com/gorilla/mux"
+	"net/http"
+	"io/ioutil"
 	"log"
-	"strings"
 	"fmt"
 )
 
-func getCurrDirectory() string {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return dir + "/"
-}
+var hackExectr HackExecutor
+var envHelper EnvHelper
 
-func clearWorkspace(){
-
-}
-
-func writeProgToSystem(prog string){
-
-}
-
-func typeCheck() (string, error) {
-	app := "hh_client"
-	filename := "test.hh"
-
-	cmd := exec.Command(app, filename)
-
-	output, err := cmd.CombinedOutput()
-	res := string(output)
-	res = strings.Replace(res, getCurrDirectory(), "", -1)
-	//fmt.Println(res)
-	if err != nil {
-		return res, err
-	}
-
-	return res, nil
-}
-
-func execProgram(){
-
+func init() {
+	envHelper = NewEnvHelper("test.hh")
+	hackExectr = NewHackExecutor("test.hh", envHelper.GetCurrDirectory())
 }
 
 func main() {
-	getCurrDirectory()
-	typeCheckResult, err := typeCheck()
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", HacklangHandler).Methods("POST")
+
+	port := ""//os.Getenv("PORT")
+	if port == "" {
+		// default port number is 5000
+		port = "8000"
+	}
+
+	// Fire up the server
+	err := http.ListenAndServe(":"+port, r)
 	if err != nil {
-		fmt.Print(typeCheckResult)
+		panic(err)
+	}
+}
+
+
+func HacklangHandler(w http.ResponseWriter, r *http.Request) {
+	str, err := envHelper.ClearWorkspace()
+	if err != nil {
+		http.Error(w, err.Error() + str, http.StatusInternalServerError)
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("Error reading body: %v", err)
+		http.Error(w, "can't read body", http.StatusBadRequest)
 		return
 	}
-	fmt.Print(typeCheckResult)
+
+	err = envHelper.WriteProgToSystem(string(body))
+	if err != nil {
+		log.Printf("Error create program: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	str, err = hackExectr.TypeCheck()
+	if err != nil {
+		http.Error(w, str, http.StatusNotAcceptable)
+		return
+	}
+
+	str, err = hackExectr.ExecProgram()
+	if err != nil {
+		http.Error(w, str, http.StatusNotAcceptable)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s", str)
 }
