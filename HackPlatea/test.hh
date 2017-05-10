@@ -1,3 +1,3 @@
 <?hh
 
-echo "nono\n";
+echo 3+125;

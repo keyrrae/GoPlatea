@@ -6,10 +6,15 @@ import (
 	"io/ioutil"
 	"log"
 	"fmt"
+	//"encoding/json"
 )
 
 var hackExectr HackExecutor
 var envHelper EnvHelper
+
+type respBody struct {
+	Result	string `json:"result"`
+}
 
 func init() {
 	envHelper = NewEnvHelper("test.hh")
@@ -36,12 +41,14 @@ func main() {
 
 
 func HacklangHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	str, err := envHelper.ClearWorkspace()
 	if err != nil {
 		http.Error(w, err.Error() + str, http.StatusInternalServerError)
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
+	fmt.Println(string(body))
 	if err != nil {
 		log.Printf("Error reading body: %v", err)
 		http.Error(w, "can't read body", http.StatusBadRequest)
@@ -57,13 +64,19 @@ func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 
 	str, err = hackExectr.TypeCheck()
 	if err != nil {
-		http.Error(w, str, http.StatusNotAcceptable)
+		w.Header().Set("Content-Type", "text/plain")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%s", "Type check error:\n" + str)
 		return
 	}
 
 	str, err = hackExectr.ExecProgram()
 	if err != nil {
-		http.Error(w, str, http.StatusNotAcceptable)
+		w.Header().Set("Content-Type", "text/plain")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%s", "Execution error:\n" + str)
 		return
 	}
 

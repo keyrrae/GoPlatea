@@ -3,15 +3,19 @@
  */
 import React from 'react';
 import { Editor, EditorState} from 'draft-js';
+import axios from 'axios'
 
 class CodeEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {editorState: EditorState.createEmpty()};
+        this.state = {editorState: EditorState.createEmpty(), text: ""};
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState) => this.setState({editorState});
-        this.logState = () => console.log((this.state.editorState.getCurrentContent().getPlainText()));
-    //.toJS()
+        this.logState = () => {console.log((this.state.editorState.getCurrentContent().getPlainText())); this.setState({text:"log"});};
+        this.runCode = () =>{
+            axios.post('http://localhost:8000/', this.state.editorState.getCurrentContent().getPlainText())
+                .then((response) => this.setState({ text: response.data }));
+        }
     }
     render() {
         return (
@@ -30,9 +34,35 @@ class CodeEditor extends React.Component {
                     type="button"
                     value="Log State"
                 />
+                <input
+                    onClick={this.runCode}
+                    style={styles.button}
+                    type="button"
+                    value="Run Code"
+                />
+                <input
+                    onClick={this.logState}
+                    style={styles.button}
+                    type="button"
+                    value="About"
+                />
+                <ResultText text={this.state.text}/>
             </div>
         );
     }
+}
+
+class ResultText extends React.Component {
+    render(){
+        return (
+            <div>
+                <p>
+                    {this.props.text}
+                </p>
+            </div>
+        );
+    }
+
 }
 
 const styles = {

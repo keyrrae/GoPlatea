@@ -14,15 +14,6 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-          <button className="App-button">
-              run
-          </button>
-
-          <button className="App-button">
-              About
-          </button>
-          <p/>
-
           <div>
               <CodeEditor/>
           </div>
