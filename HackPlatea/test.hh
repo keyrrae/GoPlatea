@@ -1,3 +1,3 @@
 <?hh
 
-echo 3+125;
+echo "nonono\n\n\twhat";

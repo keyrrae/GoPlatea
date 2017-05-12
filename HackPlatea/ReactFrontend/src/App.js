@@ -9,10 +9,10 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={hack_logo} className="App-logo" alt="logo" />
-          <h2>Welcome to HackPlatea</h2>
+          <h3>Welcome to HackPlatea</h3>
         </div>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+          Enter your Hacklang code, and click run to execute the program.
         </p>
           <div>
               <CodeEditor/>

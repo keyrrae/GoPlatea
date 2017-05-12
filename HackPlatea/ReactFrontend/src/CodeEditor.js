@@ -14,7 +14,10 @@ class CodeEditor extends React.Component {
         this.logState = () => {console.log((this.state.editorState.getCurrentContent().getPlainText())); this.setState({text:"log"});};
         this.runCode = () =>{
             axios.post('http://localhost:8000/', this.state.editorState.getCurrentContent().getPlainText())
-                .then((response) => this.setState({ text: response.data }));
+                .then((response) => {
+                this.setState({ text: response.data });
+                console.log(response.data);
+                });
         }
     }
     render() {
@@ -28,12 +31,6 @@ class CodeEditor extends React.Component {
                         ref="editor"
                     />
                 </div>
-                <input
-                    onClick={this.logState}
-                    style={styles.button}
-                    type="button"
-                    value="Log State"
-                />
                 <input
                     onClick={this.runCode}
                     style={styles.button}
@@ -57,7 +54,7 @@ class ResultText extends React.Component {
         return (
             <div>
                 <p>
-                    {this.props.text}
+                    <pre>{this.props.text}</pre>
                 </p>
             </div>
         );
@@ -69,18 +66,22 @@ const styles = {
     root: {
         fontFamily: '\'Helvetica\', sans-serif',
         padding: 20,
-        width: 600,
+        width: 800,
     },
     editor: {
         border: '1px solid #ccc',
         cursor: 'text',
-        minHeight: 80,
+        minHeight: 200,
         padding: 10,
     },
     button: {
         marginTop: 10,
+        fontSize: 24,
         textAlign: 'center',
     },
+    codeline: {
+        whiteSpaceTreatment: 'nowrap'
+    }
 };
 
 export default CodeEditor;
