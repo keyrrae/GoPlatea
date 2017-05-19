@@ -1,0 +1,73 @@
+Pseudo-main at 0
+maxStackCells: 1
+numLocals: 0
+numIterators: 0
+  // line 1
+    0: Int 1
+    9: RetC
+
+Function (mayusevv) addPositive at 10
+ Param: arr
+maxStackCells: 9
+numLocals: 5
+numIterators: 0
+ FPI 10-19; fpOff = 8
+  // line 4
+   10: FPushFuncD 1 "count"
+   16: FPassL 0 L:0
+   19: FCall 1
+   21: UnboxR
+   22: SetL L:1
+   24: PopC
+  // line 5
+   25: Int 0
+   34: SetL L:2
+   36: PopC
+  // line 6
+   37: Int 0
+   46: SetL L:3
+  // line 11
+   48: PopC
+  // line 6
+   49: CGetL L:1
+   51: CGetL2 L:3
+   53: Lt
+   54: JmpZ 57 (111)
+  // line 7
+   59: BaseL L:0 Warn
+   63: QueryM 0 CGet EL:3
+   69: SetL L:4
+   71: PopC
+  // line 8
+   72: Int 0
+   81: CGetL2 L:4
+   83: Gt
+   84: JmpZ 13 (97)
+  // line 9
+   89: CGetL L:4
+   91: CGetL2 L:2
+   93: AddO
+   94: SetL L:2
+   96: PopC
+  // line 6
+   97: IncDecL L:3 PostIncO
+  // line 11
+  100: PopC
+  // line 6
+  101: CGetL L:1 
+  103: CGetL2 L:3
+  105: Lt
+  106: JmpNZ -47 (59)
+  // line 12
+  111: CGetL L:2
+  113: RetC
+Pseudo-main at 0
+maxStackCells: 1
+numLocals: 0
+numIterators: 0
+Function (mayusevv) addPositive at 10
+ Param: arr
+maxStackCells: 9
+numLocals: 5
+numIterators: 0
+ FPI 10-19; fpOff = 8
