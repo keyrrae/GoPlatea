@@ -6,6 +6,8 @@
     "react-scripts": "0.9.5"
   },
   "dependencies": {
+    "amazeui-react": "^1.2.3",
+    "axios": "^0.16.1",
     "draft-js": "^0.10.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"

@@ -8,4 +8,6 @@ function addPositive(int $n): int {
   return $sum;
 }
 
-$res = addPositive(100);
+for ($i = 0; $i < 100; $i++) {
+  $res = addPositive(100);
+}

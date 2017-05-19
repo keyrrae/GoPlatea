@@ -7,6 +7,7 @@ import (
 	"log"
 	"fmt"
 	//"encoding/json"
+	"encoding/json"
 )
 
 var hackExectr HackExecutor
@@ -16,9 +17,21 @@ type respBody struct {
 	Result	string `json:"result"`
 }
 
+type taskResult struct {
+	Name	string `json:"name"`
+	Output string `json:"output"`
+	Status string `json:"status"`
+	Time float64	`json:"time"`
+}
+
+type ExeReq struct {
+	Language string `json:"language"`
+	Code string `json:"code"`
+}
+
 func init() {
-	envHelper = NewEnvHelper("test.hh")
-	hackExectr = NewHackExecutor("test.hh", envHelper.GetCurrDirectory())
+	envHelper = NewEnvHelper([]string{"test.php", "output"})
+	hackExectr = NewHackExecutor("test.php","output", envHelper.GetCurrDirectory())
 }
 
 func main() {
@@ -39,25 +52,30 @@ func main() {
 	}
 }
 
-
 func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	str, err := envHelper.ClearWorkspace()
 	if err != nil {
 		http.Error(w, err.Error() + str, http.StatusInternalServerError)
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
+
 	fmt.Println(string(body))
+	exeReq := ExeReq{}
+	json.Unmarshal(body, &exeReq)
+
 	if err != nil {
 		log.Printf("Error reading body: %v", err)
 		http.Error(w, "can't read body", http.StatusBadRequest)
 		return
 	}
 
-	err = envHelper.WriteProgToSystem(string(body))
+	//err = envHelper.WriteProgToSystem(string(body))
+	err = envHelper.WriteProgToSystem(exeReq.Code)
 	if err != nil {
-		log.Printf("Error create program: %v", err)
+		log.Printf("Error creating program: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -71,7 +89,7 @@ func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	str, err = hackExectr.ExecProgram()
+	str, err = hackExectr.ExecHHVM()
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
 

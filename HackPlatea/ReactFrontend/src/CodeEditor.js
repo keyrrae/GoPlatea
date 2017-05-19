@@ -3,12 +3,17 @@
  */
 import React from 'react';
 import { Editor, EditorState} from 'draft-js';
-import axios from 'axios'
+import axios from 'axios';
 
 class CodeEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {editorState: EditorState.createEmpty(), text: "", linenums: null};
+        this.state = {
+            editorState: EditorState.createEmpty(),
+            text: "",
+            linenums: null,
+            languageOption: "php",
+        };
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState) => {
             this.setState({editorState});
@@ -25,7 +30,15 @@ class CodeEditor extends React.Component {
         };
 
         this.runCode = () => {
-            axios.post('http://localhost:8000/', this.state.editorState.getCurrentContent().getPlainText())
+            const req = {
+                language: this.state.languageOption,
+                code: this.state.editorState.getCurrentContent().getPlainText()
+            };
+            axios({
+                method: 'post',
+                url: 'http://localhost:8000',
+                data: JSON.stringify(req)
+                })
                 .then((response) => {
                 this.setState({ text: response.data });
                 //console.log(this.state.linenums);
@@ -62,6 +75,11 @@ class CodeEditor extends React.Component {
                         />
                     </div>
                 </div>
+                <select value={this.state.languageOption}
+                        onChange={event => {this.setState({languageOption: event.target.value});console.log(event.target.value)}}>
+                    <option value="php">PHP</option>
+                    <option value="hack">Hack</option>
+                </select>
                 <input
                     onClick={this.runCode}
                     style={styles.button}
