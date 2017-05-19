@@ -1,0 +1,3 @@
+<?hh
+
+echo "nononffo";
