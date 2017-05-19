@@ -1,12 +1,12 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
 	"os/exec"
 )
 
-type EnvHelper struct{
+type EnvHelper struct {
 	Filename []string
 }
 

@@ -1,3 +1,3 @@
 <?hh
 
-echo "nononffo";
+echo "nonono!\n";
