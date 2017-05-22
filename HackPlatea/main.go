@@ -76,7 +76,7 @@ func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 
 	if exeReq.Language == "php" {
 		phpExeRes := hackExectr.ExecPHP()
-		res = append(res, phpExeRes)
+		res = append(res, phpExeRes...)
 	}
 
 	typeCheckRes, err := hackExectr.TypeCheck()

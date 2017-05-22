@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	"strconv"
 	"runtime"
 	"errors"
 )
@@ -15,7 +14,7 @@ import (
 type HackExecutor struct {
 	TimeApp        string
 	TypeCheckApp   string
-	PHPexeApp      string
+	PHPexeApp      []string
 	HHVMexeApp     string
 	FileName       string
 	CurrDirectory  string
@@ -24,9 +23,9 @@ type HackExecutor struct {
 }
 
 type MeasuredTime struct {
-	RealTime float64 `json:"real"`
-	UserTime float64 `json:"user"`
-	SysTime  float64 `json:"sys"`
+	RealTime string `json:"real"`
+	UserTime string `json:"user"`
+	SysTime  string `json:"sys"`
 }
 
 type TaskResult struct {
@@ -43,7 +42,7 @@ func NewHackExecutor(filename, outfilename, currentDir string) HackExecutor {
 	res := HackExecutor{
 		TimeApp:        "time",
 		TypeCheckApp:   "hh_client",
-		PHPexeApp:      "php",
+		PHPexeApp:      []string{ "php", "php5.6", "php7.0" },
 		HHVMexeApp:     "hhvm",
 		FileName:       filename,
 		CurrDirectory:  currentDir,
@@ -73,7 +72,6 @@ func (he HackExecutor) TypeCheck() (TaskResult, error) {
 
 func (he HackExecutor) ExecHHVM() TaskResult {
 	// executing a hacklang program, measure the running time
-	fmt.Println(he.HHVMexeApp)
 	cmd := exec.Command(he.TimeApp, he.HHVMexeApp, he.FileName)
 
 	stderr, err := cmd.StderrPipe()
@@ -108,38 +106,47 @@ func (he HackExecutor) ExecHHVM() TaskResult {
 	return res
 }
 
-func (he HackExecutor) ExecPHP() TaskResult {
-	fmt.Println(he.HHVMexeApp)
-	cmd := exec.Command(he.TimeApp, he.PHPexeApp, he.FileName)
+func (he HackExecutor) ExecPHP() []TaskResult {
+	var results []TaskResult
+	for _, phpExeApp := range he.PHPexeApp {
+		whichCommand := exec.Command("which", phpExeApp)
 
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		log.Fatal(err)
+		whichRes, _ := whichCommand.CombinedOutput()
+		if string(whichRes) != "" {
+			cmd := exec.Command(he.TimeApp, phpExeApp, he.FileName)
+
+			stderr, err := cmd.StderrPipe()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			stdout, err := cmd.StdoutPipe()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if err := cmd.Start(); err != nil {
+				log.Fatal(err)
+			}
+
+			output, _ := ioutil.ReadAll(stdout)
+			execOutput := string(output)
+			execOutput = strings.Replace(execOutput, he.CurrDirectory, "", -1)
+
+			slurp, _ := ioutil.ReadAll(stderr)
+			stderrOutput := string(slurp)
+
+			exeTime, _ := extractTime(stderrOutput)
+			res := TaskResult{
+				Name: PHP70,
+				Output: execOutput,
+				Time: exeTime,
+			}
+			results = append(results, res)
+		}
 	}
 
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := cmd.Start(); err != nil {
-		log.Fatal(err)
-	}
-
-	output, _ := ioutil.ReadAll(stdout)
-	execOutput := string(output)
-	execOutput = strings.Replace(execOutput, he.CurrDirectory, "", -1)
-
-	slurp, _ := ioutil.ReadAll(stderr)
-	stderrOutput := string(slurp)
-
-	exeTime, _ := extractTime(stderrOutput)
-	res := TaskResult{
-		Name: PHP70,
-		Output: execOutput,
-		Time: exeTime,
-	}
-	return res
+	return results
 }
 
 func extractTime(measure string) (MeasuredTime, error) {
@@ -168,9 +175,9 @@ func extractTime(measure string) (MeasuredTime, error) {
 	str = emptyPattern.ReplaceAllString(str, ",")
 
 	arr := strings.Split(str, ",")
-	realTime, _ := strconv.ParseFloat(arr[0], 64)
-	userTime, _ := strconv.ParseFloat(arr[2], 64)
-	sysTime, _ := strconv.ParseFloat(arr[4], 64)
+	realTime := arr[0]
+	userTime := arr[2]
+	sysTime := arr[4]
 
 	measuredTime := MeasuredTime{
 		RealTime: realTime,

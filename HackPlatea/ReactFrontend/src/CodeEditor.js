@@ -8,6 +8,7 @@ import axios from 'axios';
 class CodeEditor extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       editorState: EditorState.createEmpty(),
       text: "",
@@ -15,7 +16,9 @@ class CodeEditor extends React.Component {
       languageOption: "php",
       exeResult: [],
     };
+
     this.focus = () => this.refs.editor.focus();
+
     this.onChange = (editorState) => {
       this.setState({editorState});
       const content = this.state.editorState.getCurrentContent().getPlainText();
@@ -36,11 +39,17 @@ class CodeEditor extends React.Component {
       axios({
         method: 'post',
         url: 'http://localhost:8000',
+        //url: 'http://ec2-54-215-223-77.us-west-1.compute.amazonaws.com:8000',
         data: JSON.stringify(req)
       })
           .then((response) => {
             this.setState({ exeResult: response.data });
+            console.log(response)
           });
+    };
+
+    this.clearEditor = () => {
+        this.setState({editorState: EditorState.createEmpty(), exeResult: []});
     };
 
     this.genLineNums = (numOfLine) => {
@@ -83,6 +92,12 @@ class CodeEditor extends React.Component {
                 style={styles.button}
                 type="button"
                 value="Run Code"
+            />
+            <input
+                onClick={this.clearEditor}
+                style={styles.button}
+                type="button"
+                value="Clear"
             />
             <input
                 onClick={this.logState}
