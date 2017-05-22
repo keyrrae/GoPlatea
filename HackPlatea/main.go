@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	//"encoding/json"
 	"encoding/json"
+	"os"
 )
 
 var hackExectr HackExecutor
@@ -15,13 +15,6 @@ var envHelper EnvHelper
 
 type respBody struct {
 	Result string `json:"result"`
-}
-
-type taskResult struct {
-	Name   string  `json:"name"`
-	Output string  `json:"output"`
-	Status string  `json:"status"`
-	Time   float64 `json:"time"`
 }
 
 type ExeReq struct {
@@ -39,9 +32,9 @@ func main() {
 
 	r.HandleFunc("/", HacklangHandler).Methods("POST")
 
-	port := "" //os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
-		// default port number is 5000
+		// default port number is 8000
 		port = "8000"
 	}
 
@@ -72,7 +65,6 @@ func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//err = envHelper.WriteProgToSystem(string(body))
 	err = envHelper.WriteProgToSystem(exeReq.Code)
 	if err != nil {
 		log.Printf("Error creating program: %v", err)
@@ -80,35 +72,26 @@ func HacklangHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	str, err = hackExectr.TypeCheck()
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
+	var res []TaskResult
 
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", "Type check error:\n"+str)
-		return
+	if exeReq.Language == "php" {
+		phpExeRes := hackExectr.ExecPHP()
+		res = append(res, phpExeRes)
 	}
 
-	str, err = hackExectr.ExecHHVM()
+	typeCheckRes, err := hackExectr.TypeCheck()
 	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s", "Execution error:\n"+str)
-		return
+		// type check error
+		res = append(res, typeCheckRes)
+	} else {
+		// no type check error, execute the program
+		hhvmExeRes := hackExectr.ExecHHVM()
+		res = append(res, hhvmExeRes)
 	}
-	/*
-		str, err = hackExectr.ExecPHP()
-		if err != nil {
-			w.Header().Set("Content-Type", "text/plain")
 
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, "%s", "Execution error:\n" + str)
-			return
-		}
-	*/
-	w.Header().Set("Content-Type", "text/plain")
+	resJ, _ := json.Marshal(res)
+	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s", str)
+	fmt.Fprintf(w, "%s", resJ)
 }

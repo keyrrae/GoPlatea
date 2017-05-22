@@ -8,5 +8,7 @@ function addPositive($n) {
   return $sum;
 }
 
+for($i = 0; $i < 100000000; $i++){
 $res = addPositive(100);
+}
 ?>

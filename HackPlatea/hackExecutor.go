@@ -7,8 +7,9 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	"github.com/kataras/go-errors"
 	"strconv"
+	"runtime"
+	"errors"
 )
 
 type HackExecutor struct {
@@ -28,6 +29,15 @@ type MeasuredTime struct {
 	SysTime  float64 `json:"sys"`
 }
 
+type TaskResult struct {
+	Name   string  `json:"name"`
+	Output string  `json:"output"`
+	Time   MeasuredTime `json:"time"`
+}
+
+var HHVM string = "hhvm"
+var PHP70 string = "php7.0"
+
 // NewSomething create new instance of Something
 func NewHackExecutor(filename, outfilename, currentDir string) HackExecutor {
 	res := HackExecutor{
@@ -44,21 +54,24 @@ func NewHackExecutor(filename, outfilename, currentDir string) HackExecutor {
 	return res
 }
 
-func (he HackExecutor) TypeCheck() (string, error) {
+func (he HackExecutor) TypeCheck() (TaskResult, error) {
 	// perform type checking on the program
 	cmd := exec.Command(he.TypeCheckApp, he.FileName)
 
-	output, err := cmd.CombinedOutput()
-	res := string(output)
-	res = strings.Replace(res, he.CurrDirectory, "", -1)
-	if err != nil {
-		return res, err
+	output, _ := cmd.CombinedOutput()
+	typeCheckoutput := string(output)
+	typeCheckoutput = strings.Replace(typeCheckoutput, he.CurrDirectory, "", -1)
+
+	res := TaskResult{
+		Name: HHVM,
+		Output: typeCheckoutput,
+		Time: MeasuredTime{},
 	}
 
 	return res, nil
 }
 
-func (he HackExecutor) ExecHHVM() (string, error) {
+func (he HackExecutor) ExecHHVM() TaskResult {
 	// executing a hacklang program, measure the running time
 	fmt.Println(he.HHVMexeApp)
 	cmd := exec.Command(he.TimeApp, he.HHVMexeApp, he.FileName)
@@ -78,19 +91,24 @@ func (he HackExecutor) ExecHHVM() (string, error) {
 	}
 
 	output, _ := ioutil.ReadAll(stdout)
-	res := string(output)
-	res = strings.Replace(res, he.CurrDirectory, "", -1)
+	execOutput := string(output)
+	fmt.Println(execOutput)
+	execOutput = strings.Replace(execOutput, he.CurrDirectory, "", -1)
 
 	slurp, _ := ioutil.ReadAll(stderr)
 	stderrOutput := string(slurp)
-	et, _ := extractTime(stderrOutput)
-	fmt.Println(et)
-	fmt.Printf(":%s:\n", stderrOutput)
+	exeTime, _ := extractTime(stderrOutput)
 
-	return res, err
+	res := TaskResult{
+		Name: HHVM,
+		Output: execOutput,
+		Time: exeTime,
+	}
+
+	return res
 }
 
-func (he HackExecutor) ExecPHP() (string, error) {
+func (he HackExecutor) ExecPHP() TaskResult {
 	fmt.Println(he.HHVMexeApp)
 	cmd := exec.Command(he.TimeApp, he.PHPexeApp, he.FileName)
 
@@ -108,26 +126,35 @@ func (he HackExecutor) ExecPHP() (string, error) {
 		log.Fatal(err)
 	}
 
-	slurp, _ := ioutil.ReadAll(stderr)
-	fmt.Printf(":%s:\n", slurp)
-
 	output, _ := ioutil.ReadAll(stdout)
-	res := string(output)
+	execOutput := string(output)
+	execOutput = strings.Replace(execOutput, he.CurrDirectory, "", -1)
 
-	res = strings.Replace(res, he.CurrDirectory, "", -1)
-	if err != nil {
-		return res, err
+	slurp, _ := ioutil.ReadAll(stderr)
+	stderrOutput := string(slurp)
+
+	exeTime, _ := extractTime(stderrOutput)
+	res := TaskResult{
+		Name: PHP70,
+		Output: execOutput,
+		Time: exeTime,
 	}
-
-	return res, nil
+	return res
 }
 
 func extractTime(measure string) (MeasuredTime, error) {
 	// extracting time information from standard error output
-	// real running time
-	// user program running time
-	// operating system running time
-	timeString := "[0-9]+\\.[0-9]+\\s+real\\s+[0-9]+\\.[0-9]+\\s+user\\s+[0-9]+\\.[0-9]+\\s+sys"
+	// real execution time
+	// user program execution time
+	// operating system execution time
+	var timeString string
+	switch runtime.GOOS {
+	case "darwin":
+		timeString = "[0-9]+\\.[0-9]+\\s+real\\s+[0-9]+\\.[0-9]+\\s+user\\s+[0-9]+\\.[0-9]+\\s+sys"
+	case "linux":
+		timeString = "real\\s+[0-9]+\\.[0-9]+\\s+user\\s+[0-9]+\\.[0-9]+\\s+sys\\s+[0-9]+\\.[0-9]+\\s+"
+	}
+
 	timePattern := regexp.MustCompile(timeString)
 	matched := timePattern.FindStringSubmatch(measure)
 

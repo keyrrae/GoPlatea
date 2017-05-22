@@ -1,3 +1,3 @@
-<?hh
+<?php
 
-echo "nonono!\n";
+echo "ehelsfesfselo";

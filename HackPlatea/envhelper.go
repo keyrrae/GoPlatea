@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"fmt"
 )
 
 type EnvHelper struct {
@@ -46,6 +47,8 @@ func (eh EnvHelper) WriteProgToSystem(prog string) error {
 		return err
 	}
 	defer f.Close()
+
+	fmt.Println("prog"+prog)
 
 	_, err = f.Write([]byte(prog))
 	if err != nil {
