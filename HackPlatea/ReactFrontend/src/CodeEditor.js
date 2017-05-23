@@ -2,10 +2,21 @@
  * Created by xuanwang on 5/9/17.
  */
 import React from 'react';
-import { Editor, EditorState} from 'draft-js';
+import { Editor, EditorState, getDefaultKeyBinding, KeyBindingUtil} from 'draft-js';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import {} from 'draft-js';
 import axios from 'axios';
+
+const {hasCommandModifier} = KeyBindingUtil;
+
+function myKeyBindingFn(e) {
+  if (e.keyCode === 13 /* Tab key */ && hasCommandModifier(e)) {
+    return 'cmd_enter';
+  }
+  return getDefaultKeyBinding(e);
+}
+
 
 class CodeEditor extends React.Component {
   constructor(props) {
@@ -20,6 +31,8 @@ class CodeEditor extends React.Component {
     };
 
     this.focus = () => this.refs.editor.focus();
+
+    this.handleKeyCommand = this.handleKeyCommand.bind(this);
 
     this.onChange = (editorState) => {
       this.setState({editorState});
@@ -40,8 +53,8 @@ class CodeEditor extends React.Component {
       };
       axios({
         method: 'post',
-        url: 'http://localhost:8000',
-        //url: 'http://ec2-54-215-223-77.us-west-1.compute.amazonaws.com:8000',
+        //url: 'http://localhost:8000',
+        url: 'http://ec2-54-215-223-77.us-west-1.compute.amazonaws.com:8000',
         data: JSON.stringify(req)
       })
           .then((response) => {
@@ -51,7 +64,11 @@ class CodeEditor extends React.Component {
     };
 
     this.clearEditor = () => {
-        this.setState({editorState: EditorState.createEmpty(), exeResult: []});
+        this.setState({
+          editorState: EditorState.createEmpty(),
+          exeResult: [],
+          linenums: null
+        });
     };
 
     this.genLineNums = (numOfLine) => {
@@ -67,6 +84,16 @@ class CodeEditor extends React.Component {
     };
   }
 
+  handleKeyCommand(command) {
+    if (command === 'cmd_enter') {
+      console.log('pressed');
+      // Perform a state change to key press
+      this.runCode();
+      return 'handled';
+    }
+    return 'not-handled';
+  }
+
   render() {
     return (
         <div style={styles.root}>
@@ -78,6 +105,8 @@ class CodeEditor extends React.Component {
                     <Editor
                         editorState={this.state.editorState}
                         onChange={this.onChange}
+                        handleKeyCommand={this.handleKeyCommand}
+                        keyBindingFn={myKeyBindingFn}
                         ref="editor"
                     />
                 </div>
@@ -158,7 +187,7 @@ const styles = {
   root: {
     fontFamily: '\'Helvetica\', sans-serif',
     padding: 20,
-    width: 800,
+    width: 600,
   },
   container: {
     display: 'flex',
