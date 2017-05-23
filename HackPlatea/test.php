@@ -1,3 +1,3 @@
-<?hh
+<?php
 
-echo "too"
+echo "hello";

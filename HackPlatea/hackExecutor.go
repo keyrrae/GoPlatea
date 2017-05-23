@@ -69,7 +69,13 @@ func (he HackExecutor) TypeCheck() (TaskResult, error) {
 
 func (he HackExecutor) ExecHHVM() TaskResult {
 	// executing a hacklang program, measure the running time
-	cmd := exec.Command(he.TimeApp, he.HHVMexeApp, he.FileName)
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command(he.TimeApp, he.HHVMexeApp, he.FileName)
+	case "linux":
+		cmd = exec.Command(he.TimeApp, "-p", he.HHVMexeApp, he.FileName)
+	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -110,8 +116,13 @@ func (he HackExecutor) ExecPHP() []TaskResult {
 
 		whichRes, _ := whichCommand.CombinedOutput()
 		if string(whichRes) != "" {
-			cmd := exec.Command(he.TimeApp, phpExeApp, he.FileName)
-
+			var cmd *exec.Cmd
+			switch runtime.GOOS {
+			case "darwin":
+				cmd = exec.Command(he.TimeApp, phpExeApp, he.FileName)
+			case "linux":
+				cmd = exec.Command(he.TimeApp, "-p", phpExeApp, he.FileName)
+		  }
 			stderr, err := cmd.StderrPipe()
 			if err != nil {
 				log.Fatal(err)
@@ -158,9 +169,10 @@ func extractTime(measure string) (MeasuredTime, error) {
 	case "linux":
 		timeString = "real\\s+[0-9]+\\.[0-9]+\\s+user\\s+[0-9]+\\.[0-9]+\\s+sys\\s+[0-9]+\\.[0-9]+\\s+"
 	}
-
 	timePattern := regexp.MustCompile(timeString)
 	matched := timePattern.FindStringSubmatch(measure)
+  fmt.Println(":"+measure+":")
+	fmt.Println(matched)
 
 	if len(matched) != 1 {
 		return MeasuredTime{}, errors.New("Cannot extract time from string")
@@ -172,9 +184,17 @@ func extractTime(measure string) (MeasuredTime, error) {
 	str = emptyPattern.ReplaceAllString(str, ",")
 
 	arr := strings.Split(str, ",")
-	realTime := arr[0]
-	userTime := arr[2]
-	sysTime := arr[4]
+	var realTime, userTime, sysTime string
+	switch runtime.GOOS {
+	case "darwin":
+		realTime = arr[0]
+		userTime = arr[2]
+		sysTime = arr[4]
+	case "linux":
+		realTime = arr[1]
+		userTime = arr[3]
+		sysTime = arr[5]
+	}
 
 	measuredTime := MeasuredTime{
 		RealTime: realTime,
