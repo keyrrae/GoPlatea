@@ -113,7 +113,9 @@ class CodeEditor extends React.Component {
             </div>
             <div>
                 <select value={this.state.languageOption}
-                        onChange={ event => this.setState({languageOption: event.target.value}) }>
+                        onChange={ event => this.setState({languageOption: event.target.value})}
+                        style={styles.select}
+                >
                     <option value="php">PHP Zend and HHVM</option>
                     <option value="hack">HHVM</option>
                 </select>
@@ -208,9 +210,20 @@ const styles = {
     padding: 10,
     fontSize: 15,
   },
+  select: {
+    marginTop: 10,
+    fontSize: 15,
+    borderRadius: 4,
+    backgroundColor: '#e2e2e2',
+  },
   button: {
     marginTop: 10,
-    fontSize: 24,
+    marginRight: 10,
+    borderRadius: 4,
+    border: 'none',
+    fontSize: 15,
+    backgroundColor: '#646464',
+    color: '#ffffff',
     textAlign: 'center',
   },
   codeline: {
