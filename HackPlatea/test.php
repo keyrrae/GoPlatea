@@ -1,3 +1,3 @@
-<?php
+<?hh
 
-echo "kiki koko!!";
+echo "too"

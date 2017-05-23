@@ -9,7 +9,7 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={hack_logo} className="App-logo" alt="logo" />
-          <h3>Welcome to HackPlatea</h3>
+          <h3 style={{marginLeft: 20}}>Welcome to HackPlatea</h3>
         </div>
         <p className="App-intro">
           Enter your Hacklang code, and click run to execute the program.

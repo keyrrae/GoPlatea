@@ -12,6 +12,7 @@ import (
 
 var hackExectr HackExecutor
 var envHelper EnvHelper
+var nameMap map[string]string
 
 type respBody struct {
 	Result string `json:"result"`
@@ -25,6 +26,12 @@ type ExeReq struct {
 func init() {
 	envHelper = NewEnvHelper([]string{"test.php", "output"})
 	hackExectr = NewHackExecutor("test.php", "output", envHelper.GetCurrDirectory())
+	nameMap = map[string]string {
+		"hhvm": "HHVM",
+		"php":   "PHP",
+		"php5.6": "PHP 5.6",
+		"php7.0": "PHP 7.0",
+	}
 }
 
 func main() {

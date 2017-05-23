@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import { Editor, EditorState} from 'draft-js';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 import axios from 'axios';
 
 class CodeEditor extends React.Component {
@@ -105,30 +107,51 @@ class CodeEditor extends React.Component {
                 type="button"
                 value="About"
             />
-            <div>
-              {this.state.exeResult.map((res) => {
-                  return (
-                      <div key={res["name"]}>
-                          <ResultText text={res["output"]}/>
-                      </div>
-                  );
-                })
-              }
+            <div style={{paddingTop: 20}}>
+              <ResultTabs content={this.state.exeResult}/>
             </div>
         </div>
     );
   }
 }
 
-class ResultText extends React.Component {
-  render(){
+class ResultTabs extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { tabIndex: 0 };
+  }
+  render() {
+    if (this.props.content.length === 0){
+      return (
+          <div/>
+      );
+    }
     return (
-        <div>
-            <pre>{this.props.text}</pre>
-        </div>
+        <Tabs
+            selectedIndex={this.state.tabIndex}
+            onSelect={
+              tabIndex => this.setState({ tabIndex })
+            }
+        >
+          <TabList>
+            {this.props.content.map((res) =>
+              <Tab key={res["name"]}>
+                {res["name"]}
+              </Tab>
+            )}
+          </TabList>
+          {this.props.content.map((res) =>
+              <TabPanel key={res["name"]}>
+                <h4>Output</h4>
+                <p>{res["output"]}</p>
+                <h4>Execution Time</h4>
+                <p>{'User:  ' + res["time"]["user"]+'s'}</p>
+                <p>{'System:' + res["time"]["sys"]+'s'}</p>
+              </TabPanel>
+          )}
+        </Tabs>
     );
   }
-
 }
 
 const styles = {

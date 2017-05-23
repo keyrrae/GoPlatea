@@ -34,9 +34,6 @@ type TaskResult struct {
 	Time   MeasuredTime `json:"time"`
 }
 
-var HHVM string = "hhvm"
-var PHP70 string = "php7.0"
-
 // NewSomething create new instance of Something
 func NewHackExecutor(filename, outfilename, currentDir string) HackExecutor {
 	res := HackExecutor{
@@ -62,7 +59,7 @@ func (he HackExecutor) TypeCheck() (TaskResult, error) {
 	typeCheckoutput = strings.Replace(typeCheckoutput, he.CurrDirectory, "", -1)
 
 	res := TaskResult{
-		Name: HHVM,
+		Name: nameMap[he.HHVMexeApp],
 		Output: typeCheckoutput,
 		Time: MeasuredTime{},
 	}
@@ -98,7 +95,7 @@ func (he HackExecutor) ExecHHVM() TaskResult {
 	exeTime, _ := extractTime(stderrOutput)
 
 	res := TaskResult{
-		Name: HHVM,
+		Name: nameMap[he.HHVMexeApp],
 		Output: execOutput,
 		Time: exeTime,
 	}
@@ -138,7 +135,7 @@ func (he HackExecutor) ExecPHP() []TaskResult {
 
 			exeTime, _ := extractTime(stderrOutput)
 			res := TaskResult{
-				Name: PHP70,
+				Name: nameMap[phpExeApp],
 				Output: execOutput,
 				Time: exeTime,
 			}
