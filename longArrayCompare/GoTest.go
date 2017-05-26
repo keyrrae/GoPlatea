@@ -9,7 +9,7 @@ func main() {
         iterations int = 0
         innerloop int = 0
         sum float64 = 0.0
-        array_length int = 100000000
+        array_length int = 10000
         array []float64 = make([]float64, array_length)
     )
     if len(os.Args) > 1 {
