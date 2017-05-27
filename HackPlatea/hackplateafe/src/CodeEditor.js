@@ -5,7 +5,6 @@ import React from 'react';
 import { Editor, EditorState, getDefaultKeyBinding, KeyBindingUtil} from 'draft-js';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import {} from 'draft-js';
 import axios from 'axios';
 
 const {hasCommandModifier} = KeyBindingUtil;
