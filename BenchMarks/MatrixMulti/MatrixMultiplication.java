@@ -1,5 +1,3 @@
-package jvmeval;
-
 import java.util.Random;
 
 public class MatrixMultiplication {
@@ -31,18 +29,14 @@ public class MatrixMultiplication {
   public static void main(String[] args) {
 
     MatrixBuilder mb = new MatrixBuilder();
-    double[][] A = mb.setX(100).setY(100).enableGenRand().build();
-    double[][] B = mb.setX(100).setY(100).enableGenRand().build();
+    int n = 100;
+    if(args.length > 0) {
+      n = Integer.parseInt(args[0]);
+    }
+    double[][] A = mb.setX(n).setY(n).enableGenRand().build();
+    double[][] B = mb.setX(n).setY(n).enableGenRand().build();
 
     double[][] result = multiplicar(A, B);
-
-    /*
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 2; j++)
-        System.out.print(result[i][j] + " ");
-      System.out.println();
-    }*/
-    int i;
   }
 }
 

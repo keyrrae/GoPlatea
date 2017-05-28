@@ -1,4 +1,6 @@
 from collections import deque
+import random
+
 def is_valid(s):
     count = 0
     for ch in s:
@@ -10,7 +12,7 @@ def is_valid(s):
             return False
     return count == 0
 
-def removeInvalidParentheses(, s):
+def removeInvalidParentheses(s):
     """
     :type s: str
     :rtype: List[str]
@@ -33,3 +35,11 @@ def removeInvalidParentheses(, s):
 
 def main():
     a = ['(' , ')']
+    dut = ""
+    random.seed(1234)
+    for i in range(40):
+        dut = dut + a[random.randint(0, 1)]
+    print(dut)
+    removeInvalidParentheses(dut)
+
+main()

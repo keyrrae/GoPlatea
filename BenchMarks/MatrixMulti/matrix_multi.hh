@@ -12,7 +12,9 @@ class MatrixMulti {
     $bRows = count($B);
     $bColumns = count($B[0]);
     if ($aColumns != $bRows) {
-      throw new Exception('A:Rows: '.$aColumns.' did not match B:Columns '.$bRows.".");
+      throw new Exception(
+        'A:Rows: '.$aColumns.' did not match B:Columns '.$bRows.".",
+      );
     }
 
     $C = new Vector(null);
@@ -20,7 +22,7 @@ class MatrixMulti {
     for ($i = 0; $i < $aRows; $i++) {
       $row = new Vector(null);
       for ($j = 0; $j < $bColumns; $j++) {
-          $row->add(0.0);
+        $row->add(0.0);
       }
       $C->add($row);
     }
@@ -92,7 +94,9 @@ class MatrixBuilder {
   }
 }
 
-$dim = 100;
-$A = (new MatrixBuilder())->set_x($dim)->set_y($dim)->enable_gen_rand()->build();
-$B = (new MatrixBuilder())->set_x($dim)->set_y($dim)->enable_gen_rand()->build();
+$dim = 800;
+$A =
+  (new MatrixBuilder())->set_x($dim)->set_y($dim)->enable_gen_rand()->build();
+$B =
+  (new MatrixBuilder())->set_x($dim)->set_y($dim)->enable_gen_rand()->build();
 $C = MatrixMulti::multiplicar($A, $A);

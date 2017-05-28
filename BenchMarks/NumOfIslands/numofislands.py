@@ -11,7 +11,7 @@ def numIslands(grid):
                 numOfIslands += 1
                 destoryIsland(grid, i, j)
 
-    return numOfIsland
+    return numOfIslands
 
 def destoryIsland(grid, i, j):
     if i < 0 or j < 0 or i >= len(grid) or j >= len(grid[0]) or grid[i][j] == '0':
@@ -22,3 +22,17 @@ def destoryIsland(grid, i, j):
     destoryIsland(grid, i - 1, j)
     destoryIsland(grid, i, j + 1)
     destoryIsland(grid, i, j - 1)
+
+def main():
+    grid = []
+    chars = ['0', '1']
+    n = 10000
+    for i in range(n):
+        row = []
+        for j in range(n):
+            row.append(chars[(i*17+j*13) % 2])
+        grid.append(row)
+
+    numIslands(grid)
+
+main()

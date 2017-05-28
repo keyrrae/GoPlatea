@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class NQueens {
   private static String[] drawChessboard(ArrayList<Integer> cols) {
     String[] chessboard = new String[cols.size()];
@@ -56,5 +58,9 @@ public class NQueens {
     }
     search(n, new ArrayList<Integer>(), result);
     return result;
+  }
+
+  public static void main(String[] args){
+    solveNQueens(13);
   }
 }

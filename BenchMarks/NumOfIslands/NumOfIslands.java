@@ -1,4 +1,4 @@
-public class NumberOfIslands {
+public class NumOfIslands {
   public static int numIslands(char[][] grid) {
     int count = 0;
     for(int i=0; i<grid.length; i++) {
@@ -19,5 +19,17 @@ public class NumberOfIslands {
     search(grid, x+1, y);
     search(grid, x, y-1);
     search(grid, x, y+1);
+  }
+
+  public static void main(String[] args){
+    int n = 10000;
+    char[] charSet = new char[]{'0', '1'};
+    char[][] grid = new char[n][n];
+    for(int i = 0; i < n; i++) {
+      for(int j = 0; j < n; j++) {
+        grid[i][j] = charSet[(i*17+j*13) % 2];
+      }
+    }
+    numIslands(grid);
   }
 }
