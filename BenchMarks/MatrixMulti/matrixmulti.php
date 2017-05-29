@@ -29,7 +29,21 @@ function matrixmulti($_A,$_B) {
 
 }
 
-  $mat1 = array(800, 800);
-  $mat2 = array(800, 800);
-  matrixmulti($mat1,$mat2);
+function genMatrix($n) {
+  $res = array($n);
+  for($i = 0; $i < $n; $i++){
+    $row = array($n);
+    for($j = 0; $j < $n; $j++){
+      $row[$j] = mt_rand(0, 100);
+    }
+    $res[$i] = $row;
+  }
+  return $res;
+}
+
+$n = 800;
+$mat1 = genMatrix($n);
+$mat2 = genMatrix($n);
+matrixmulti($mat1,$mat2);
+
 ?>

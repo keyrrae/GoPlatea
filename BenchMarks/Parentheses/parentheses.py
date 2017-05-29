@@ -34,11 +34,12 @@ def removeInvalidParentheses(s):
     return result if result else [""]
 
 def main():
-    a = ['(' , ')']
+    s = "(()()(()(()((()))(()((())(()(()((()())((())))()"
+    a = list(s)
     dut = ""
     random.seed(1234)
     for i in range(40):
-        dut = dut + a[random.randint(0, 1)]
+        dut = dut + a[i % len(a)]
     print(dut)
     removeInvalidParentheses(dut)
 

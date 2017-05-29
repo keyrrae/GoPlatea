@@ -23,15 +23,15 @@ func isValid(cols []int, col int) bool {
       return false
     }
     // left-top to right-bottom
-    if (i - cols[i] == row - col) {
-        return false;
+    if i - cols[i] == row - col {
+        return false
     }
     // right-top to left-bottom
-    if (i + cols[i] == row + col) {
-        return false;
+    if i + cols[i] == row + col {
+        return false
     }
   }
-  return true;
+  return true
 }
 
 func search(n int, cols []int, res [][]string) {
