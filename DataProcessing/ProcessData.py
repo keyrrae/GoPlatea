@@ -101,6 +101,7 @@ class DataProcessor:
                      color=boxColors[k])
 
             # Finally, add a basic legend
+            '''            
             plt.figtext(0.90, 0.12, 'PHP 5.6',
                         backgroundcolor=boxColors[0], color='white', weight='roman',
                         size='small')
@@ -110,6 +111,8 @@ class DataProcessor:
             plt.figtext(0.90, 0.04, 'HHVM 3.18',
                         backgroundcolor=boxColors[2],
                         color='white', weight='roman', size='small')
+            
+            '''
 
         speedups = np.asarray(speedups).T.tolist()
 
@@ -122,11 +125,11 @@ class DataProcessor:
         rects3 = ax.bar(ind + 3 * width, speedups[2], width, color='b')
 
         # add some text for labels, title and axes ticks
-        ax.set_ylabel('Scores')
-        ax.set_title('Scores by group and gender')
+        ax.set_ylabel('Speedups')
+        ax.set_title('Speedups of ' + self.benchmark_name[benchmark])
         ax.set_xticks(ind + width * 3 / 2 + width)
         ax.set_xticklabels(('Postman', 'CURL', 'WebpageTest'))
-        ax.set_ylim(0, 1.7)
+        ax.set_ylim(0, 1.5)
 
         ax.legend((rects1[0], rects2[0], rects3[0]), ('PHP 5.6', 'PHP 7.0', 'HHVM 3.18'), loc="upper left")
 
