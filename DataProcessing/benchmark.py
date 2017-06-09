@@ -18,7 +18,7 @@ class DataProcessor:
             self.java_speedups = []
             self.go_speedups = []
             self.php_names = ["PHP 5.6", "PHP 7.0", "HHVM"]
-            self.language_names = ["HHVM", "Python", "Java", "Go"]
+            self.language_names = ["HHVM", "PyPy", "Java", "Go"]
             self.benchmark_name = {"fibonacci": "Fibonacci", "longarray": "Long Array", "nbody": "N-Body",
                                    "binarytress": "Binary Trees", "matrixmulti": "Matrix\nMultiplication",
                                    "mandelbrot": "Mandelbrot", "spectral-norm": "Spectral Norm",
